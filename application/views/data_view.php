@@ -112,7 +112,6 @@ $(document).ready(function(){
 			cache:false,
 			success:function(data){
 				var obj = $.parseJSON(data);
-				console.log(obj);
 				if(obj === "OK"){
 					noti('success','Save Successfully');
 					$('.er').html('');
