@@ -12,17 +12,19 @@ class DataTable extends CI_Controller
 	}
 
 	public function insert(){
+		if(!$this->input->is_ajax_request()) exit("Invalid Request");
+
 		$this->form_validation->set_rules('name','Name','required');
 		$this->form_validation->set_rules('title','Title','required');
+		
 		if($this->form_validation->run() == True){
 			$post = $this->input->post();
 			unset($post['subbtn']);
-			$r = $this->DataTable_model->insert($post);
-			if($r):
-				echo json_encode("OK");
-			else:
-				echo json_encode("QF");
-			endif;
+			$qd = $this->DataTable_model->insert($post);
+			
+			$qd ? $r['msg'] = TRUE : $r['msg'] = FALSE;			
+			
+			echo json_encode($r);
 		}else{
 			foreach ($this->input->post() as $key => $value) {
 				$r[$key] = form_error($key);

@@ -12,7 +12,7 @@
 <div class="container">
 	
 	
-	<div class="row">
+	<div class="row" id="test">
 		<div class="col-md-6 offset-lg-3">
 		<h1>Data Table Insert</h1>
 			<p id="succ_mess"></p>
@@ -23,13 +23,12 @@
 				    	$name = [
 				    		'name'  =>	'name',
 				    		'class' =>	'form-control',
-				    		'id'	=>	'',
 				    		'required'=>'required',
 				    	];
 				    echo form_input($name);
 				    ?>
 				</div>
-				<span class="er" id="ename"></span>
+				<span id="ename"></span>
 				<div class="form-group">
 				    <label for="exampleInputEmail1">Title</label>
 				    <?php
@@ -37,12 +36,11 @@
 				    		'name'  =>	'title',
 				    		'class' =>	'form-control',
 				    		'required'=>'required',
-				    		'id'	=>	'',
 				    	];
 				    echo form_input($title);
 				    ?>
 				</div>
-				<span class="er" id="etitle"></span>
+				<span id="etitle"></span>
 
 				<div class="form-group">
 				    <label for="exampleInputEmail1">Description</label>
@@ -51,7 +49,6 @@
 				    		'name'  =>	'des',
 				    		'class' =>	'form-control',
 				    		'required'=>'required',
-				    		'id'	=>	'',
 				    	];
 				    echo form_input($des);
 				    ?>
@@ -100,35 +97,37 @@ $(document).ready(function(){
 
 	get_data();
 
-	// $('#show_h').hide();
-
 	$("#btnSubmit").click(function(e){
 		e.preventDefault();
 
 		$.ajax({
-			url:'/ajax/DataTable/insert',
+			url:'<?= base_url('DataTable/insert')?>',
 			type:"POST",
 			data:$("form").serialize(),
 			cache:false,
 			success:function(data){
 				var obj = $.parseJSON(data);
-				if(obj === "OK"){
+
+				if(obj.msg === true){
 					noti('success','Save Successfully');
-					$('.er').html('');
-					$("form").get(0).reset();
+					$('#submitForm').find('span').html('');
+					$("form")[0].reset();
 					get_data();
 				}else{
 					noti('info','Something Went Wrong Try Again!');
-					$("#ename").html(obj['name']);
-					$("#etitle").html(obj['title']);
+
+					$('#submitForm').find('span').eq(0).html(obj.name);
+					$('#submitForm').find('span').eq(1).html(obj.title);
+					//$("#ename").html(obj.name);
+					//$("#etitle").html(obj.title);
 				}
 				
-				if(obj === "QF"){
+				if(obj.msg === false){
 					noti('warning','Query Failed');
 				}
 			},
 			error:function(data){
-				noti('error','Failed to Save');
+				noti('error','Server Error');
 			}
 
 		});
@@ -146,17 +145,17 @@ $(document).ready(function(){
 		        toast({
 		          type: type,
 		          title: title
-		        })
+		        });
 	}
 
 	function get_data(){
 		$.ajax({
 		        type  : 'ajax',
-		        url   : 'DataTable/all',
+		        url   : '<?= base_url('DataTable/all');?>',
 		        async : false,
 		        dataType : 'json',
 		        success : function(data){
-				var html = '';
+					var html = '';
 		            var i;
 		            for(i=0; i<data.length; i++){
 		                html += '<tr>'+
